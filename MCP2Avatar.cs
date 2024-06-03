@@ -40,8 +40,10 @@ public class MCP2Avatar : MonoBehaviour
         while (this.ReceivedMessages.TryDequeue(out message)) {
             var bones = ParseSMFMessages(message);
 
-            UpdateBonesTarget(this.Avatar, bones);
-            ConvertBonesMirror(this.Avatar);
+            if (bones.Length > 0) {
+                UpdateBonesTarget(this.Avatar, bones);
+                ConvertBonesMirror(this.Avatar);
+            }
         }
     }
 
@@ -222,9 +224,12 @@ public class MCP2Avatar : MonoBehaviour
                     }
                     bone.Rotation = new Quaternion(floats[0], floats[1], floats[2], floats[3]);
                     bone.Postion = new Vector3(floats[4], floats[5], floats[6]);
-                    bones.Add(bone);
+                    if (bone.BoneID >= 0) {
+                        bones.Add(bone);
+                    }
 
                     bone = new SMFBoneTransform();
+                    bone.BoneID = -1;
                 }
                 cur += 8 + (int)smfdata.Size;
 
